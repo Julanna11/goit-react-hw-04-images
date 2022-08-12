@@ -18,7 +18,6 @@ const Searchbar = ({ onSubmit }) => {
   const handleSubmit = event => {
     event.preventDefault();
     onSubmit(searchQuery);
-    sethQuery('');
   };
 
   return (

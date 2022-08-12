@@ -17,7 +17,6 @@ export default function App() {
   const [largeImage, setLargeImage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(null);
-  const [per_page] = useState(12);
 
   useEffect(() => {
     const getImages = () => {
