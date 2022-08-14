@@ -3,7 +3,7 @@ import { mapper } from '../service/mapper';
 import { Application } from './App.styled';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
-import ButtonLoad from './Button/Button';
+import Button from './Button/Button';
 import LoaderSpinner from './Loader/Loader';
 import Modal from './Modal/Modal';
 import { useState } from 'react';
@@ -12,11 +12,11 @@ import { useEffect } from 'react';
 export default function App() {
   const [page, setPage] = useState(1);
   const [images, setImages] = useState([]);
-  const [searchQuery, setsearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [largeImage, setLargeImage] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const getImages = () => {
@@ -28,8 +28,9 @@ export default function App() {
 
       API.getImages({ searchQuery, page })
         .then(response => {
-          setImages([...mapper(response)]);
+          setImages(prevImages => [...prevImages, ...mapper(response)]);
         })
+
         .catch(error => {
           setError(error);
         })
@@ -45,17 +46,19 @@ export default function App() {
         });
     };
     getImages();
-  }, [page, searchQuery, error]);
+  }, [page, searchQuery]);
 
-  const onChangeName = searchQuery => {
-    setsearchQuery(searchQuery);
+  const onChangeName = query => {
+    if (searchQuery === query) {
+      return;
+    }
+    setSearchQuery(query);
     setPage(1);
     setImages([]);
   };
 
   const clickLoadMore = e => {
     e.preventDefault();
-    setIsLoading(true);
     setPage(prevPage => prevPage + 1);
   };
 
@@ -74,10 +77,10 @@ export default function App() {
       {images.length !== 0 ? (
         <ImageGallery images={images} onOpenModal={onClickLargeImage} />
       ) : (
-        searchQuery !== '' && <p>No found image</p>
+        error && <p>No found image</p>
       )}
       {isLoading && <LoaderSpinner />}
-      {images.length >= 12 && <ButtonLoad onClick={clickLoadMore} />}
+      {images.length >= 12 && <Button onClick={clickLoadMore} />}
       {showModal && (
         <Modal
           onClose={modalClose}
