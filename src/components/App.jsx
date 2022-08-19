@@ -77,7 +77,7 @@ export default function App() {
       {images.length !== 0 ? (
         <ImageGallery images={images} onOpenModal={onClickLargeImage} />
       ) : (
-        error && <p>No found image</p>
+        searchQuery !== 1 && <p>No found image</p>
       )}
       {isLoading && <LoaderSpinner />}
       {images.length >= 12 && <Button onClick={clickLoadMore} />}
